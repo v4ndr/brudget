@@ -3,7 +3,7 @@ Brudget (devlopment name) is a mobile budget app. Submit your expanses on the go
 
 # Screenshots
 
-![Imgur](https://imgur.com/hrgppyF)
+![Imgur](https://imgur.com/hrgppyF.gif)
 
 # technologies 
 
