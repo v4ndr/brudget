@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Text, TouchableOpacity, StyleSheet, View, FlatList} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faBackspace, faCheck } from '@fortawesome/free-solid-svg-icons'
+import budgets from '../data/budgets.json'
 
 const displayInput = (input) => {
     var inputText = ""
@@ -108,7 +109,7 @@ const displayNumPad = (input, setInput) => {
 }
 
 const renderBudgetLabel = (title, index) => {
-    const checked = 1
+    const checked = 0
     const displayCheck = (idx) => {
         if (idx === checked){
             return(
@@ -124,15 +125,14 @@ const renderBudgetLabel = (title, index) => {
     )     
 }
 const displayBudgetSelector = () => {
-    data = ['Bonus', 'Courses', 'Voiture', 'Autre dépense', 'Crédit']
     return(
         <View style={styles.budgetSelector}>
             <FlatList 
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                data={data}
+                data={budgets}
                 keyExtractor={(_,index)=>index.toString()}
-                renderItem={({item, index})=>renderBudgetLabel(item, index)}
+                renderItem={({item, index})=>renderBudgetLabel(item.title, index)}
             />
         </View>
         
@@ -199,7 +199,8 @@ const styles = StyleSheet.create({
 
     },
     budgetLabelText:{
-        fontSize:16
+        fontSize:16,
+        textTransform:'capitalize'
     },
     checkInLabel:{
         marginRight:8

@@ -1,26 +1,6 @@
 import * as React from 'react'
 import {Text, StyleSheet, View, FlatList} from 'react-native'
-
-const budgets = [
-    {
-        title:'courses',
-        total:300,
-        actual:100,
-        color:'#c2b092'
-    },
-    {
-        title:'bonus',
-        total:200,
-        actual:50,
-        color:'#cfc5a5'
-    },
-    {
-        title:'voiture',
-        total:100,
-        actual:90,
-        color:'#eae3c8'
-    }
-]
+import budgets from '../data/budgets.json'
 
 const renderBudget = (budget) => {
     budgetPercentage = Math.trunc((budget.actual/budget.total)*100).toString()

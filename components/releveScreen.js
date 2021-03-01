@@ -1,130 +1,10 @@
 import 'react-native-get-random-values'
 import * as React from 'react'
 import {View, Text, SectionList, StyleSheet, TouchableOpacity} from 'react-native'
-import { v4 as uuidv4 } from 'uuid'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import {useNavigation} from '@react-navigation/native'
+import operations from '../data/operations.json'
 
-const operations = [
-    {
-        date: new Date("01/12/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'bonus',
-                amount:-12.00,
-                comment:'resto'
-            },
-            {
-                id:uuidv4(),
-                cat:'bonus',
-                amount:-23.12,
-                comment:'livres'
-            },
-            {
-                id:uuidv4(),
-                cat:'courses',
-                amount:-90.21,
-                comment:''
-            }
-        ]
-    },
-    {
-        date: new Date("01/14/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'voiture',
-                amount:-60.11,
-                comment:'fuel'
-            },
-            {
-                id:uuidv4(),
-                cat:'autre',
-                amount:-2.50,
-                comment:'choco'
-            }
-        ]
-    },
-    {
-        date: new Date("01/18/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'autre',
-                amount:-3.80,
-                comment:''
-            }
-        ]
-    },
-    {
-        date:new Date("01/20/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'bonus',
-                amount:-15.90,
-                comment:''
-            }
-        ]
-    },
-    {
-        date:new Date("01/22/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'courses',
-                amount:-40.32,
-                comment:''
-            },
-            {
-                id:uuidv4(),
-                cat:'autre',
-                amount:-12.20,
-                comment:'boulangerie'
-            },
-            {
-                id:uuidv4(),
-                cat:'crédit',
-                amount:700.00,
-                comment:'salaire'
-            },
-        ]
-    },
-    {
-        date:new Date("01/28/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'crédit',
-                amount:253.61,
-                comment:'salaire Grace'
-            }
-        ]
-    },
-    {
-        date:new Date("02/02/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'crédit',
-                amount:15.00,
-                comment:'remb uber eats'
-            }
-        ]
-    },
-    {
-        date:new Date("02/05/2021"),
-        data:[
-            {
-                id:uuidv4(),
-                cat:'bonus',
-                amount:-12.00,
-                comment:'ciné'
-            }
-        ]
-    },
-]
 
 const FloatingButton = () => {
     return (
@@ -150,6 +30,7 @@ const releveScreen = () => {
     })
 
     const renderSectionHeader = (date) => {
+        date = new Date(date)
         return (
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionHeaderText}>
@@ -168,7 +49,7 @@ const releveScreen = () => {
             <View style={styles.item}>
                 <View>
                     <Text style={styles.itemText}>
-                        {item.amount+' €'}
+                        {item.value+' €'}
                     </Text>
                     <Text style={styles.catText}>
                         {item.cat+comment}
@@ -188,6 +69,7 @@ const releveScreen = () => {
         <>
         <SectionList
             stickySectionHeadersEnabled={true}
+            scrollIndicatorInsets={{ right: 1 }}
             sections={operations}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => renderItem(item)}

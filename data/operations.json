@@ -1,0 +1,14 @@
+[
+    {
+        "date": "01/12/2021",
+        "data":[
+            {
+                "id":0,
+                "cat":"bonus",
+                "value":-12.00,
+                "comment":"resto",
+                "checked":false
+            }
+        ]
+    }
+]

@@ -10,6 +10,14 @@ import inputScreen from './components/inputScreen'
 import monitorScreen from './components/monitorScreen'
 import releveScreen from './components/releveScreen'
 import cfgScreen from './components/cfgScreen'
+import addBudgetScreen from './components/addBudgetScreen'
+import addRecurenceScreen from './components/addRecurenceScreen'
+
+const ToggleDrawerButton = (props) => (
+  <TouchableOpacity onPress={()=>{props.navigation.toggleDrawer()}}>
+    <FontAwesomeIcon icon={faBars} style={styles.headerButton}/>
+  </TouchableOpacity>
+)
 
 const inputStack = () => {
   const Stack = createStackNavigator()
@@ -17,13 +25,7 @@ const inputStack = () => {
     <Stack.Navigator>
       <Stack.Screen name='inputScreen' component={inputScreen} options={({navigation})=>({
         title:'Budget.',
-        headerLeft:()=>{
-          return(
-            <TouchableOpacity onPress={()=>{navigation.toggleDrawer()}}>
-              <FontAwesomeIcon icon={faBars} style={styles.headerButton}/>
-            </TouchableOpacity>
-          )
-        }
+        headerLeft:()=>(<ToggleDrawerButton navigation={navigation}/>)
       })}/>
     </Stack.Navigator>
   )
@@ -35,13 +37,7 @@ const monitorStack = () => {
     <Stack.Navigator>
       <Stack.Screen name='monitorScreen' component={monitorScreen} options={({navigation})=>({
         title:'Budget.',
-        headerLeft:()=>{
-          return(
-            <TouchableOpacity onPress={()=>{navigation.toggleDrawer()}}>
-              <FontAwesomeIcon icon={faBars} style={styles.headerButton}/>
-            </TouchableOpacity>
-          )
-        }
+        headerLeft:()=>(<ToggleDrawerButton navigation={navigation}/>)
       })}/>
     </Stack.Navigator>
   )
@@ -53,13 +49,7 @@ const releveStack = () => {
     <Stack.Navigator>
       <Stack.Screen name='releveScreen' component={releveScreen} options={({navigation})=>({
         title:'Budget.',
-        headerLeft:()=>{
-          return(
-            <TouchableOpacity onPress={()=>{navigation.toggleDrawer()}}>
-              <FontAwesomeIcon icon={faBars} style={styles.headerButton}/>
-            </TouchableOpacity>
-          )
-        }
+        headerLeft:()=>(<ToggleDrawerButton navigation={navigation}/>)
       })}/>
     </Stack.Navigator>
   )
@@ -71,13 +61,15 @@ const cfgStack = () => {
     <Stack.Navigator>
       <Stack.Screen name='cfgScreen' component={cfgScreen} options={({navigation})=>({
         title:'Budget.',
-        headerLeft:()=>{
-          return(
-            <TouchableOpacity onPress={()=>{navigation.toggleDrawer()}}>
-              <FontAwesomeIcon icon={faBars} style={styles.headerButton}/>
-            </TouchableOpacity>
-          )
-        }
+        headerLeft:()=>(<ToggleDrawerButton navigation={navigation}/>)
+      })}/>
+      <Stack.Screen name='addBudgetScreen' component={addBudgetScreen} options={({navigation})=>({
+        title:'Nouveau budget',
+        headerBackTitle:'Retour'
+      })}/>
+      <Stack.Screen name='addRecurenceScreen' component={addRecurenceScreen} options={({navigation})=>({
+        title:'Nouvelle opération récurente',
+        headerBackTitle:'Retour'
       })}/>
     </Stack.Navigator>
   )
