@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Text, TouchableOpacity, StyleSheet, View, FlatList} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faBackspace, faCheck } from '@fortawesome/free-solid-svg-icons'
-import budgets from '../data/budgets.json'
+import {storeNewOp} from '../utils/index'
 
 const displayInput = (input) => {
     var inputText = ""
@@ -32,8 +32,7 @@ const displayInput = (input) => {
         
     )
 }
-
-const displayNumPad = (input, setInput) => {
+const displayNumPad = (input, setInput, budgets, setBudgets) => {
     return(
         <View style={styles.numPad}>
             <View style={styles.padRow}>
@@ -100,14 +99,15 @@ const displayNumPad = (input, setInput) => {
                     0
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.padItem}>
-                    <FontAwesomeIcon icon={faCheck} color='#8a8a8a' size={30} style={styles.padIcon}/>
+                <TouchableOpacity style={styles.padItem} onPress={()=>{
+                    storeNewOp(input)
+                }}>
+                    <FontAwesomeIcon icon={faCheck} color='#8a8a8a' size={30} style={styles.padIcon} />
                 </TouchableOpacity>
             </View>
         </View>
     )
 }
-
 const renderBudgetLabel = (title, index) => {
     const checked = 0
     const displayCheck = (idx) => {
@@ -124,7 +124,7 @@ const renderBudgetLabel = (title, index) => {
         </TouchableOpacity>
     )     
 }
-const displayBudgetSelector = () => {
+const displayBudgetSelector = (budgets) => {
     return(
         <View style={styles.budgetSelector}>
             <FlatList 
@@ -138,18 +138,18 @@ const displayBudgetSelector = () => {
         
     )
 }
-  
 const inputScreen = () => {
     const [input, setInput] = React.useState(Array)
+    const [budgets, setBudgets] = React.useState(Array)
+
     return(
         <View style={styles.container}>
             {displayInput(input)}
-            {displayBudgetSelector()}
-            {displayNumPad(input, setInput)}
+            {displayBudgetSelector(budgets)}
+            {displayNumPad(input, setInput, budgets, setBudgets)}
         </View>
     )
 }
-  
 const styles = StyleSheet.create({
     container:{
         flex:1

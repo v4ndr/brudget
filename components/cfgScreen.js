@@ -79,7 +79,7 @@ const cfgScreen = () => {
                         <TouchableOpacity style={styles.modalButton} onPress={()=>{setModalVisible(false); nav.navigate('addBudgetScreen')}}>
                             <FontAwesomeIcon icon={faPiggyBank} size={100} color='gray'/>
                         </TouchableOpacity>
-                        <View style={styles.separator}/>
+                        {/* <View style={styles.separator}/> */}
                         <TouchableOpacity style={styles.modalButton} onPress={()=>{setModalVisible(false); nav.navigate('addRecurenceScreen')}}>
                             <FontAwesomeIcon icon={faCoins} size={100} color='gray'/>
                         </TouchableOpacity>

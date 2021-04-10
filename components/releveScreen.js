@@ -4,7 +4,7 @@ import {View, Text, SectionList, StyleSheet, TouchableOpacity} from 'react-nativ
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import {useNavigation} from '@react-navigation/native'
 import operations from '../data/operations.json'
-
+import {getOps} from '../utils/index'
 
 const FloatingButton = () => {
     return (
@@ -27,7 +27,13 @@ const releveScreen = () => {
                 </TouchableOpacity>
             )
         })
-    })
+        const getOpsF = async () => {
+            const opsFromStorage = await getOps()
+            return opsFromStorage
+        }
+        //!!!
+        
+    }, [])
 
     const renderSectionHeader = (date) => {
         date = new Date(date)

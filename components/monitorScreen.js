@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Text, StyleSheet, View, FlatList} from 'react-native'
-import budgets from '../data/budgets.json'
+import database from '@react-native-firebase/database'
+const dbRef = database().ref('/userid')
 
 const renderBudget = (budget) => {
     budgetPercentage = Math.trunc((budget.actual/budget.total)*100).toString()
@@ -20,6 +21,12 @@ const renderBudget = (budget) => {
     )
 }
 const monitorScreen = () => {
+    let budgets = [{title:'bonus', total:'300', actual:'100', color:'#abcdef'}]
+    // React.useEffect(()=>{
+    //     dbRef.child('budgets').on('value', snapshot =>{
+    //         budgets = snapshot
+    //     })
+    // },[])
     return(
         <View style={styles.container}>
             <View style={styles.soldes}>

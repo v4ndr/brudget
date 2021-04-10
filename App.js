@@ -6,12 +6,7 @@ import {NavigationContainer} from '@react-navigation/native'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import {StyleSheet, TouchableOpacity} from 'react-native'
-import inputScreen from './components/inputScreen'
-import monitorScreen from './components/monitorScreen'
-import releveScreen from './components/releveScreen'
-import cfgScreen from './components/cfgScreen'
-import addBudgetScreen from './components/addBudgetScreen'
-import addRecurenceScreen from './components/addRecurenceScreen'
+import {inputScreen, monitorScreen, releveScreen, cfgScreen, addBudgetScreen, addRecurenceScreen} from './components/index'
 
 const ToggleDrawerButton = (props) => (
   <TouchableOpacity onPress={()=>{props.navigation.toggleDrawer()}}>
