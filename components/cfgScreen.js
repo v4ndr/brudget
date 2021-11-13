@@ -2,12 +2,10 @@ import * as React from 'react'
 import {View, Text, FlatList, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback} from 'react-native'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPlus, faCoins, faPiggyBank, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { v4 as uuidv4 } from 'uuid'
 import Emoji from 'react-native-emoji'
 import { useNavigation } from '@react-navigation/native'
-import budgets from '../data/budgets.json'
-import recurences from '../data/recurences.json'
-
+import { useSelector } from 'react-redux'
+import {strToDevise} from '../utils/index'
 
 const FAB = (props) => {
     nav = useNavigation()
@@ -24,7 +22,7 @@ const renderBudget = (item) => {
     return(
         <View style={[styles.itemContainer, {backgroundColor:item.color}]}>
             <Text style={styles.budgetName}>{item.title}</Text>
-            <Text style={styles.budgetValue}>{item.total+' €'}</Text>
+            <Text style={styles.budgetValue}>{strToDevise(item.total)+' €'}</Text>
         </View>
     )
 }
@@ -32,11 +30,11 @@ const renderRecurence = (item) => {
     return(
         <View style={[styles.itemContainer, styles.recurenceContainer]}>
             <View style={{flex:1, height:60, justifyContent:'center'}}>
-                <Text style={styles.recurenceAmount}>{item.value+' €'}</Text>
-                <Text style={styles.recurenceSubtitle}>{item.name}</Text>
+                <Text style={styles.recurenceAmount}>{strToDevise(item.value)+' €'}</Text>
+                <Text style={styles.recurenceSubtitle}>{item.title}</Text>
             </View>
             <View style={{flex:1, height:60, justifyContent:'center', alignItems:'flex-end'}}>
-                <Text style={styles.recurenceSubtitle}><Emoji name="spiral_calendar_pad"/>{' '+item.day}</Text>
+                <Text style={styles.recurenceSubtitle}>{item.day+' '}<Emoji name="spiral_calendar_pad"/></Text>
             </View>
         </View>
     )
@@ -45,11 +43,14 @@ const renderRecurence = (item) => {
 const cfgScreen = () => {
     const nav = useNavigation()
     const [modalVisible, setModalVisible] = React.useState(false)
+    const budgets = useSelector(state=>state.budgets)
+    const recurences = useSelector(state=>state.recurences)
+    recurences.sort((a,b)=>a.day-b.day)
     return (
         <>
             <View style={styles.container}>
                 <Text style={styles.sectionTitle}>BUDGETS</Text>
-                <View style={{flex:2}}>
+                <View style={{flex:3}}>
                     <FlatList
                         data={budgets}
                         keyExtractor={(_,index)=>index.toString()}
@@ -57,7 +58,7 @@ const cfgScreen = () => {
                     />
                 </View>
                 <Text style={styles.sectionTitle}>OPERATIONS RECURENTES</Text>
-                <View style={{flex:3}}>
+                <View style={{flex:4}}>
                     <FlatList
                         data={recurences}
                         keyExtractor={(_,index)=>index.toString()}
@@ -77,11 +78,13 @@ const cfgScreen = () => {
                     <TouchableWithoutFeedback >
                         <View style={styles.modal}>
                         <TouchableOpacity style={styles.modalButton} onPress={()=>{setModalVisible(false); nav.navigate('addBudgetScreen')}}>
-                            <FontAwesomeIcon icon={faPiggyBank} size={100} color='gray'/>
+                            <Text style={styles.buttonLabel}>Budget</Text>
+                            {/* <FontAwesomeIcon icon={faPiggyBank} size={100} color='gray'/> */}
                         </TouchableOpacity>
-                        {/* <View style={styles.separator}/> */}
+                        <View style={styles.separator}/>
                         <TouchableOpacity style={styles.modalButton} onPress={()=>{setModalVisible(false); nav.navigate('addRecurenceScreen')}}>
-                            <FontAwesomeIcon icon={faCoins} size={100} color='gray'/>
+                            <Text style={styles.buttonLabel}>Opération récurente</Text>
+                            {/* <FontAwesomeIcon icon={faCoins} size={100} color='gray'/> */}
                         </TouchableOpacity>
                         </View>
                     </TouchableWithoutFeedback>
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
     },
     separator:{
         width:1,
-        height:'100%',
+        height:'80%',
         backgroundColor:'gray'
     },
     FABContainer:{
@@ -161,18 +164,20 @@ const styles = StyleSheet.create({
     modal:{
         width:'100%',
         flexDirection:'row',
-        justifyContent:'space-evenly',
+        justifyContent:'center',
         alignItems:'center',
         backgroundColor:'#eae3c8',
         borderRadius:30
     },
     modalButton:{
+        flex:1,
         justifyContent:'center',
         alignItems:'center',
-        padding:50
+        paddingHorizontal:10,
+        paddingVertical:40
     },
-    closeModalButton:{
-        
+    buttonLabel:{
+        fontSize:25
     }
 })
 

@@ -1,10 +1,51 @@
 import * as React from 'react';
-import {Text, TouchableOpacity, StyleSheet, View, FlatList} from 'react-native';
+import {Text, TouchableOpacity, StyleSheet, Modal, View, FlatList, Button, TextInput} from 'react-native'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faBackspace, faCheck } from '@fortawesome/free-solid-svg-icons'
-import {storeNewOp} from '../utils/index'
+import { faBackspace, faPlus, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/core'
+import {numpadToNum} from '../utils/index'
+import DatePicker from 'react-native-date-picker'
+import {TouchableWithoutFeedback} from 'react-native'
 
-const displayInput = (input) => {
+const displayDatePicker = (date, setDate) => {
+    const [modalVisible, setModalVisible] = React.useState(false)
+    day = date.getDate()
+    month = date.getMonth()+1
+    day < 10 ? day = '0'+day : null
+    month < 10 ? month = '0'+month : null
+    buttonTitle = day+'/'+month+'/'+date.getFullYear()
+    return (
+        <>
+        <View style={styles.datePickerLabel}>
+            <Button title={buttonTitle} onPress={()=>setModalVisible(true)}/>
+        </View>
+        <Modal
+                animationType='slide'
+                visible={modalVisible}
+                transparent={true}
+                onRequestClose={()=>setModalVisible(false)}
+            > 
+            <TouchableWithoutFeedback onPress={()=>{setModalVisible(false)}}>
+                <View style={styles.datePickerModalContainer}>
+                <TouchableWithoutFeedback >
+                    <View style={styles.datePickerModal}>
+
+                    <DatePicker
+                        date={date}
+                        onDateChange={setDate}
+                        mode={'date'}
+                        locale={'fr'}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+                </View> 
+            </TouchableWithoutFeedback>
+        </Modal>
+        </>
+    )
+}
+const displayInput = (input, positif) => {
     var inputText = ""
     input.map(x=>inputText+=x)
     if (inputText.length == 1){
@@ -23,6 +64,9 @@ const displayInput = (input) => {
         inputText = '0,00 €'
     }
 
+    if(positif){
+        inputText = '+'+inputText
+    }
     return(
         <View style={styles.input}>
             <Text style={styles.inputText}>
@@ -32,7 +76,45 @@ const displayInput = (input) => {
         
     )
 }
-const displayNumPad = (input, setInput, budgets, setBudgets) => {
+const displayCommentInput = (comment, setComment) => {
+    return (
+        <View style={styles.commentInput}>
+            <TextInput style={styles.commentText} placeholder='Commentaire' value={comment} onChangeText={setComment}/>
+        </View>
+    )
+}
+const renderBudgetLabel = (item, selectedBudget, setSelectedBudget) => {
+    const displayCheck = (id) => {
+        if (id === selectedBudget){
+            return(
+                <FontAwesomeIcon icon={faCheck} color='white' size={15} style={styles.checkInLabel}/>
+            )
+        }
+    }
+    return(
+        <TouchableOpacity style={styles.budgetLabel} onPress={()=>
+        (selectedBudget === item.id) ? setSelectedBudget(null) : setSelectedBudget(item.id)}>
+            {displayCheck(item.id)}
+            <Text style={styles.budgetLabelText}>{item.title}</Text>
+        </TouchableOpacity>
+    )     
+}
+const displayBudgetSelector = (budgets, selectedBudget, setSelectedBudget) => {
+    return(
+        <View style={styles.budgetSelector}>
+            <FlatList 
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={budgets}
+                keyExtractor={(_,index)=>index.toString()}
+                renderItem={({item, index})=>renderBudgetLabel(item, selectedBudget, setSelectedBudget)}
+            />
+        </View>
+        
+    )
+}
+const displayNumPad = (input, setInput, positif, setPositif) => {
+    const dispatch = useDispatch()
     return(
         <View style={styles.numPad}>
             <View style={styles.padRow}>
@@ -87,66 +169,63 @@ const displayNumPad = (input, setInput, budgets, setBudgets) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.padRow}>
-                <TouchableOpacity onPress={()=>{
-                        var inputCopy = [...input]
-                        inputCopy.splice(-1,1)
-                        setInput(inputCopy)
-                    }} style={styles.padItem}>
-                    <FontAwesomeIcon icon={faBackspace} color='#8a8a8a' size={30} style={styles.padIcon}/>
+                <TouchableOpacity style={styles.padItem} onPress={()=>{
+                    setPositif(!positif)
+                }}>
+                    <FontAwesomeIcon icon={faPlus} color='#8a8a8a' size={30} style={styles.padIcon} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>{setInput([...input, 0])}} style={styles.padItem}>
                     <Text style={styles.padText}>
                     0
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.padItem} onPress={()=>{
-                    storeNewOp(input)
-                }}>
-                    <FontAwesomeIcon icon={faCheck} color='#8a8a8a' size={30} style={styles.padIcon} />
+                <TouchableOpacity onPress={()=>{
+                        dispatch({type:'CLEAN_OPS'}) //dev
+                        dispatch({type:'CLEAN_BUDGETS'}) //dev
+                        dispatch({type:'CLEAN_RECURENCES'}) //dev
+                        var inputCopy = [...input]
+                        inputCopy.splice(-1,1)
+                        setInput(inputCopy)
+                    }} style={styles.padItem}>
+                    <FontAwesomeIcon icon={faBackspace} color='#8a8a8a' size={30} style={styles.padIcon}/>
                 </TouchableOpacity>
+                
             </View>
         </View>
     )
 }
-const renderBudgetLabel = (title, index) => {
-    const checked = 0
-    const displayCheck = (idx) => {
-        if (idx === checked){
-            return(
-                <FontAwesomeIcon icon={faCheck} color='white' size={15} style={styles.checkInLabel}/>
-            )
-        }
-    }
-    return(
-        <TouchableOpacity style={styles.budgetLabel}>
-            {displayCheck(index)}
-            <Text style={styles.budgetLabelText}>{title}</Text>
-        </TouchableOpacity>
-    )     
-}
-const displayBudgetSelector = (budgets) => {
-    return(
-        <View style={styles.budgetSelector}>
-            <FlatList 
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                data={budgets}
-                keyExtractor={(_,index)=>index.toString()}
-                renderItem={({item, index})=>renderBudgetLabel(item.title, index)}
-            />
-        </View>
-        
-    )
-}
 const inputScreen = () => {
     const [input, setInput] = React.useState(Array)
-    const [budgets, setBudgets] = React.useState(Array)
-
+    const [positif, setPositif] = React.useState(false)
+    const [selectedBudget, setSelectedBudget] = React.useState(null)
+    const [date, setDate] = React.useState(new Date())
+    const [comment, setComment] = React.useState('')
+    const budgets = useSelector(state=>state.budgets)
+    const navigation = useNavigation()
+    const dispatch = useDispatch()
+    React.useEffect(()=>{
+        navigation.setOptions({headerRight:()=>(
+                <TouchableOpacity style={{padding:10, alignItems:'center', backgroundColor:'white'}} onPress={()=>{
+                    inputInNum = numpadToNum(input, positif)
+                    dispatch({type:'ADD_OP', value:[inputInNum, selectedBudget, date, comment]})
+                    selectedBudget ? dispatch({type:'AFFECT_TO_BUDGET', value:[selectedBudget, inputInNum]}) : null
+                    setInput([])
+                    setSelectedBudget(null)
+                    setPositif(false)
+                    setComment('')
+                }}>
+                    <Text style={{color:'#007AFF', fontSize:18}}>OK</Text>
+                </TouchableOpacity>
+            )
+        })
+    }, [input, positif, selectedBudget, date, comment])
     return(
         <View style={styles.container}>
-            {displayInput(input)}
-            {displayBudgetSelector(budgets)}
-            {displayNumPad(input, setInput, budgets, setBudgets)}
+            {displayDatePicker(date, setDate)}
+            {displayInput(input, positif)}
+            {displayCommentInput(comment, setComment)}
+            {displayBudgetSelector(budgets, selectedBudget, setSelectedBudget)}
+            {displayNumPad(input, setInput, positif, setPositif)}
         </View>
     )
 }
@@ -154,8 +233,22 @@ const styles = StyleSheet.create({
     container:{
         flex:1
     },
+    datePickerLabel:{
+        flex:1,
+        justifyContent:'center'
+    },
+    datePickerModalContainer:{
+        flex:1,
+        justifyContent:'flex-end',
+        alignItems:'center'
+    },
+    datePickerModal:{
+        width:'100%',
+        alignItems:'center',
+        backgroundColor:'white'
+    },
     input:{
-        flex:7,
+        flex:6,
         justifyContent:'center',
         
     },
@@ -164,7 +257,7 @@ const styles = StyleSheet.create({
         paddingHorizontal:10
     },
     numPad:{
-        flex:8
+        flex:7
     },
     inputText:{
         textAlign:'center',
@@ -204,6 +297,17 @@ const styles = StyleSheet.create({
     },
     checkInLabel:{
         marginRight:8
+    },
+    commentInput:{
+        flex:1,
+        width:'100%',
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    commentText:{
+        fontSize:20,
+        width:'100%',
+        textAlign:'center'
     }
 })
 

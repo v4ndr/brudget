@@ -1,11 +1,14 @@
 import * as React from 'react'
 import {Text, StyleSheet, View, FlatList} from 'react-native'
-import database from '@react-native-firebase/database'
-const dbRef = database().ref('/userid')
+import { useSelector } from 'react-redux'
+import { strToDevise } from '../utils'
 
 const renderBudget = (budget) => {
-    budgetPercentage = Math.trunc((budget.actual/budget.total)*100).toString()
+    budgetPercentage = Math.trunc((budget.actual/budget.total)*100);
+    (budgetPercentage > 100) ? budgetPercentage = 100 : null
+    budgetPercentage = budgetPercentage.toString()
     budgetPercentage = budgetPercentage+'%'
+    
     return(
         <View style={styles.budgetItem}>
             <View style={[styles.coloredBar, {backgroundColor:budget.color, width:budgetPercentage}]}/>
@@ -14,19 +17,28 @@ const renderBudget = (budget) => {
             </Text>
             <View style={styles.budgetActual}>
                 <Text style={styles.budgetActualText}>
-                    {budget.total-budget.actual} €
+                    {strToDevise(Math.round((budget.total-budget.actual)*100)/100)} €
                 </Text>
             </View>
         </View>
     )
 }
 const monitorScreen = () => {
-    let budgets = [{title:'bonus', total:'300', actual:'100', color:'#abcdef'}]
-    // React.useEffect(()=>{
-    //     dbRef.child('budgets').on('value', snapshot =>{
-    //         budgets = snapshot
-    //     })
-    // },[])
+    const ops = useSelector(state => state.ops)
+    const budgets = useSelector(state => state.budgets)
+    const rec = useSelector(state=> state.recurences)
+    solde = ops.reduce((acc,e)=> e.checked ? acc+e.value : acc, 0)
+    ///console.log(ops)
+    sumOpsWoBudget = ops.reduce((acc,e)=>e.budget ? 0 : acc+e.value, 0)
+ 
+    //sumRec = rec.reduce((acc,e)=>acc + e.value,0)
+    console.log('\n----------------\n')
+    console.log('bud : ',budgets)
+    sumBud = budgets.reduce((acc,e)=>(e.actual > e.total) ? acc+e.actual : acc+e.total,0)
+    //console.log(sumBud)
+    console.log('sumopswobud : ',sumOpsWoBudget)
+    reste =  sumOpsWoBudget - sumBud
+    //console.log(ops, budgets, rec)
     return(
         <View style={styles.container}>
             <View style={styles.soldes}>
@@ -36,7 +48,7 @@ const monitorScreen = () => {
                     </Text>
                     <View style={styles.soldesAmount}>
                         <Text style={styles.soldesAmountText} adjustsFontSizeToFit numberOfLines={1}>
-                            1345 €
+                            {strToDevise(Math.round(solde*100)/100)+" €"}
                         </Text>
                     </View>
                 </View>
@@ -47,7 +59,7 @@ const monitorScreen = () => {
                     </Text>
                     <View style={styles.soldesAmount}>
                         <Text style={styles.soldesAmountText} adjustsFontSizeToFit numberOfLines={1}>
-                            300 €
+                        {strToDevise(Math.round(reste*100)/100)+" €"}
                         </Text>
                     </View>
                 </View>
